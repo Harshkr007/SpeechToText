@@ -64,6 +64,124 @@ venv\Scripts\activate  # Windows
 pip install -r requirements.txt
 ```
 
+## Ubuntu Setup Guide
+
+1. System Requirements:
+```bash
+# Update system packages
+sudo apt update
+sudo apt upgrade
+
+# Install Python and required system packages
+sudo apt install python3.8 python3.8-venv python3-pip git ffmpeg
+```
+
+2. Project Setup:
+```bash
+# Navigate to project directory
+cd SpeechToText
+
+# Create virtual environment
+python3 -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate
+
+# Install pip tools
+pip install --upgrade pip setuptools wheel
+
+# Install project dependencies
+pip install -r requirements.txt
+```
+
+3. Environment Setup:
+```bash
+# Create and edit .env file
+touch .env
+echo "MODEL_PATH=./backend/model/cached_model" >> .env
+echo "CUDA_VISIBLE_DEVICES=0" >> .env  # If using GPU
+```
+
+4. Model Training (Optional):
+```bash
+# Navigate to training directory
+cd training
+
+# Start training
+python3 training/train.py
+
+# Wait for training to complete
+# Trained model will be saved in finetuned_multilingual directory
+```
+
+5. Run API Server:
+```bash
+# Navigate to backend directory
+cd backend
+
+# Start the server
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+6. Test API:
+```bash
+# In a new terminal (with venv activated)
+# Test server health
+curl http://localhost:8000/
+
+# Test transcription (replace audio.wav with your file)
+curl -X POST http://localhost:8000/transcribe/ \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@/path/to/audio.wav" \
+  -F "language=hi"
+```
+
+### Troubleshooting
+
+1. CUDA Issues:
+```bash
+# Check CUDA availability
+python3 -c "import torch; print(torch.cuda.is_available())"
+
+# If CUDA not found, install CUDA drivers:
+sudo ubuntu-drivers autoinstall
+sudo reboot
+```
+
+2. Audio Processing Issues:
+```bash
+# Install additional audio processing libraries
+sudo apt install libsndfile1-dev
+```
+
+3. Permission Issues:
+```bash
+# Fix directory permissions
+chmod -R 755 .
+```
+
+4. Memory Issues:
+```bash
+# Add swap space if needed
+sudo fallocate -l 8G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+```
+
+### Development Tools (Optional)
+
+Install helpful development tools:
+```bash
+# Install development tools
+sudo apt install git-all
+sudo apt install tmux
+sudo apt install htop
+
+# Install VS Code (if not already installed)
+sudo snap install code --classic
+```
+
 ## Usage
 
 ### Training the Model

@@ -13,6 +13,7 @@ from datetime import datetime
 sys.path.append('../config')
 from config.training_config import TrainingConfig
 from data_preprocessing.prepare_dataset import prepare_dataset
+from utils.auth import setup_huggingface_auth
 
 wer_metric = load_metric("wer")
 
@@ -32,6 +33,13 @@ def compute_metrics(pred, processor):
     return {"wer": wer}
 
 def train():
+    # Add authentication setup at the start
+    try:
+        setup_huggingface_auth()
+    except Exception as e:
+        print(f"Authentication failed: {str(e)}")
+        return
+
     # Set random seed for reproducibility
     set_seed(42)
     
